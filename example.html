@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+<body>
+  <div class="mainTitle">
+    <h3>영화 리스트</h3>
+  </div>
+  <div class="movieList">
+    
+  </div>
+</body>
+<script>
+  function ajax() {
+    fetch("https://yts.mx/api/v2/list_movies.json?sort_by=year&order_by=desc")
+      .then(function(response) {
+        if(!response == 200) {
+          console.log("서버와 통신에 실패했습니다.")
+        } else {
+          return response.json();
+        }
+      })
+      .then(function(jsonData) {
+        let data = jsonData.data.movies;
+        let movieList = document.querySelector(".movieList");
+        let tag = "";
+        let genreList = '';
+        
+        for (let i = 0; i < data.length; i++) {
+          let title = data[i].title;
+          let year = data[i].year;
+          let img = data[i].medium_cover_image;
+          let genres = data[i].genres;
+          let summary = data[i].summary;
+       
+          for (let g in genres) {
+              genreList += `<li>${genres[g]}</li>`;
+          }
+          tag += `
+            <div class="movie">
+              <img src="${img}">
+              <div class="inner">
+                <h3 class="title">${title}</h3>
+                <h3 class="year">${year}</h3>
+                <ul>${genreList}</ul>
+				<p class="summary">${summary}</p>
+              </div>
+            </div>
+          `;
+        }
+      	movieList.innerHTML = tag;
+      })
+  }
+
+  (function(){
+    ajax();
+  })(); 
+</script>
+</html>
